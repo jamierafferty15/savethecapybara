@@ -1003,9 +1003,15 @@ function syncPageBg() {
   if (key === pageBgKey) return; pageBgKey = key;
   const html = document.documentElement, body = document.body;
   if (phoneMQ.matches) {
-    const bg = `linear-gradient(to bottom, ${th.cloud} 0 50%, ${th.water[1]} 50% 100%)`;
-    html.style.background = bg; body.style.background = bg;
-  } else { html.style.background = ''; body.style.background = ''; }
+    // one band drawn once over the page; anything beyond it (behind Safari's toolbar) is river colour
+    html.style.backgroundColor = th.water[1];
+    html.style.backgroundImage = `linear-gradient(to bottom, ${th.cloud} 0 50%, ${th.water[1]} 50% 100%)`;
+    html.style.backgroundRepeat = 'no-repeat';
+    body.style.background = 'transparent';
+  } else {
+    html.style.backgroundColor = ''; html.style.backgroundImage = ''; html.style.backgroundRepeat = '';
+    body.style.background = '';
+  }
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', phoneMQ.matches ? th.cloud : '#24164A');
 }
