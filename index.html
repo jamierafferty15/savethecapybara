@@ -995,7 +995,22 @@ function draw() {
 }
 
 /* ---------- layout ---------- */
+/* On phones the strips behind the clock and Safari's toolbar take the game's own colours */
+const phoneMQ = window.matchMedia ? matchMedia('(max-width:560px)') : { matches: false };
+let pageBgKey = '';
+function syncPageBg() {
+  const th = THEMES[S.theme] || THEMES[0], key = (phoneMQ.matches ? 'p' : 'd') + S.theme;
+  if (key === pageBgKey) return; pageBgKey = key;
+  const html = document.documentElement, body = document.body;
+  if (phoneMQ.matches) {
+    const bg = `linear-gradient(to bottom, ${th.cloud} 0 50%, ${th.water[1]} 50% 100%)`;
+    html.style.background = bg; body.style.background = bg;
+  } else { html.style.background = ''; body.style.background = ''; }
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', phoneMQ.matches ? th.cloud : '#24164A');
+}
 function fit() {
+  pageBgKey = '';
   const app = $('#app'), cs = getComputedStyle(app);
   const aw = app.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
   const ah = app.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
@@ -1245,7 +1260,7 @@ let last = performance.now();
 function frame(now) {
   const dt = Math.min(.05, (now - last) / 1000); last = now;
   if (S.mode !== 'paused') update(dt);
-  draw();
+  draw(); syncPageBg();
   requestAnimationFrame(frame);
 }
 S.L = makeLevel(1, P.diff);
