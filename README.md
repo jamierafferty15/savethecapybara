@@ -2,7 +2,7 @@
 
 A colourful browser game for kids. A storm has blown the capybaras into the clouds, and you catch them on your lily pad as they float down on leaf parachutes.
 
-- 15 levels across five worlds: Sunny Skies, Windy Day, Starry Night, Autumn Leaves and Holiday Snow
+- 18 levels across six worlds: Sunny Skies, Windy Day, Starry Night, Autumn Leaves, Holiday Snow and Space Splash
 - Easy, Medium and Hard modes, each with its own stars
 - A Capy Club of friends to unlock, party music and sound effects
 - Works on phones, tablets and computers (touch, mouse or arrow keys)

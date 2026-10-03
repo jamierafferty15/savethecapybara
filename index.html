@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Catch the capybaras on your lily pad and bring them home! A free, colourful game for kids with 15 levels and Easy, Medium and Hard modes.">
+<meta name="description" content="Catch the capybaras on your lily pad and bring them home! A free, colourful game for kids with 18 levels across six worlds and Easy, Medium and Hard modes.">
 <link rel="canonical" href="https://savethecapybara.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Save the Capybara">
@@ -227,7 +227,7 @@ body{margin:0;background:radial-gradient(circle at 50% 0%,var(--page2),var(--pag
         </div>
         <div>
           <h3>Worlds and friends</h3>
-          <p>There are 15 levels across five worlds: Sunny Skies, Windy Day, Starry Night, Autumn Leaves and Holiday Snow. Every level you finish brings a new friend to your Capy Club. Finish a level without losing a heart to earn all 3 stars.</p>
+          <p>There are 18 levels across six worlds: Sunny Skies, Windy Day, Starry Night, Autumn Leaves, Holiday Snow and Space Splash. Every level you finish brings a new friend to your Capy Club. Finish a level without losing a heart to earn all 3 stars.</p>
         </div>
         <div>
           <h3>Easy, Medium or Hard</h3>
@@ -235,7 +235,7 @@ body{margin:0;background:radial-gradient(circle at 50% 0%,var(--page2),var(--pag
         </div>
         <div class="grown">
           <h3>For grown-ups</h3>
-          <p>No adverts, no sign-up, and the game doesn't collect any information. Stars and friends are saved only in this browser on this device. All the music and pictures are made inside the game.</p>
+          <p>No adverts and no sign-up. Game progress, stars and friends are saved only in this browser on this device. We use privacy-friendly website analytics to understand how the game is being used. All the music and pictures are made inside the game.</p>
         </div>
         <p class="made">Made at home for a daughter who loves capybaras.</p>
         <button class="btn small lagoon" data-back>Back</button>
@@ -281,6 +281,7 @@ const THEMES = [
   { name: 'Starry Night', tile: '#5A49C6', sky: ['#18205E', '#5A3F9E'], hill1: '#33508A', hill2: '#233A6C', water: ['#2D61A6', '#18306B'], cloud: '#C3BEF0', shade: '#9C96D6', sun: { c: '#FFF4C2', glow: 'rgba(255,245,200,.25)', x: 385, y: 150, r: 28 }, moon: true, stars: true },
   { name: 'Autumn Leaves', tile: '#C0582A', sky: ['#F49A5A', '#FCE0A8'], hill1: '#D9832F', hill2: '#A9542A', water: ['#4C9DB0', '#2C6A80'], cloud: '#FFF0DC', shade: '#F3CFA8', sun: { c: '#FFD36B', glow: 'rgba(255,215,120,.45)', x: 380, y: 180, r: 34 }, trees: 'autumn', leaves: true, fallAcc: 'scarf' },
   { name: 'Holiday Snow', tile: '#D2364C', sky: ['#22346E', '#8AA6DA'], hill1: '#E6EEFB', hill2: '#FFFFFF', water: ['#7CC6DE', '#3B78AA'], cloud: '#F1F4FF', shade: '#C9D3F0', sun: { c: '#FFFBEA', glow: 'rgba(255,255,230,.3)', x: 380, y: 150, r: 26 }, stars: true, trees: 'pine', snow: true, noReeds: true, fallAcc: 'santa' },
+  { name: 'Space Splash', tile: '#6E57E0', sky: ['#080B24', '#3B1F73'], hill1: '#6A6FA8', hill2: '#464C83', water: ['#2E4FA6', '#171F63'], cloud: '#0D1233', shade: '#14194A', stars: true, noReeds: true, fallAcc: 'helmet', space: true, chop: 1.35 },
 ];
 const NUM = THEMES.length * 3;
 const TIPS = {
@@ -298,7 +299,10 @@ const TIPS = {
   12: 'A blustery autumn day. Hold on tight!',
   13: 'It is snowing! The capybaras need you.',
   14: 'Brrr! Bring them home to the warm hot spring.',
-  15: 'The final rescue. Save them all for the holidays!'
+  15: 'The final rescue. Save them all for the holidays!',
+  16: 'Welcome to Space Splash! Even capybaras need space helmets.',
+  17: 'Cosmic rescue! Watch for speedy space hazards.',
+  18: 'Final orbit! Save every capybara in the stars!'
 };
 const DIFFS = {
   easy:   { label: 'Easy',   speed: .78, spawn: 1.18, conker: .55, dbl: .5,  pad: 20,  sway: .7,  hearts: 5, goal: -2, conkerBase: 0 },
@@ -311,7 +315,7 @@ function makeLevel(i, dk) {
   return {
     n: i, diff: dk, maxHearts: d.hearts,
     goal: Math.min(32, 6 + i * 2) + d.goal,
-    speed: (105 + Math.min(i, 16) * 13) * d.speed,
+    speed: (105 + Math.min(i, 16) * 13) * d.speed * (i >= 16 ? .88 : 1),
     spawn: Math.max(.6, 1.45 - i * .07) * d.spawn,
     conker: Math.min(.36, conker * d.conker),
     orange: i >= 3 ? .07 : 0,
@@ -339,6 +343,9 @@ const FRIENDS = [
   { name: 'Frosty', acc: 'earmuffs', line: 'Keeps toasty ears in the snow.' },
   { name: 'Holly', acc: 'holly', line: 'Decorates every tree she finds.' },
   { name: 'Jingle', acc: 'santa', line: 'Delivers oranges to everyone.' },
+  { name: 'Cosmo', acc: 'helmet', line: 'Ready for every rescue mission in space.' },
+  { name: 'Nova', acc: 'planet', line: 'Dreams about skating around Saturn.' },
+  { name: 'Comet', acc: 'rocket', line: 'Zooms through every rescue with a grin.' },
 ];
 const WIN_HEAD = ['Capy-tastic!', 'Hooray, hero!', 'Splash-tacular!', 'You did it!', 'Super saver!', 'Brilliant catching!'];
 const WIN_MSG = [
@@ -402,7 +409,8 @@ const MUSIC = (() => {
     { tr: 2, bpm: 126, dr: 1 },
     { tr: -3, bpm: 110, dr: .55 },
     { tr: -1, bpm: 118, dr: .9 },
-    { tr: 3, bpm: 128, dr: 1, bells: true }
+    { tr: 3, bpm: 128, dr: 1, bells: true },
+    { tr: 5, bpm: 132, dr: .8 }
   ];
   let timer = null, next = 0, step = 0, out = null, cfg = WORLD[0], noiseBuf = null;
   const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
@@ -559,6 +567,21 @@ function drawAcc(x, acc) {
       x.strokeStyle = '#FFFFFF'; x.lineWidth = 3.5; x.beginPath(); x.arc(27, -22, 15, Math.PI * 1.05, Math.PI * 1.95); x.stroke();
       x.fillStyle = '#FF8FB8'; circ(x, 14, -24, 7); x.fill(); circ(x, 40, -24, 6); x.fill();
       x.fillStyle = '#FFC2DA'; circ(x, 12, -26, 3); x.fill(); break;
+    case 'helmet':
+      x.fillStyle = 'rgba(180,240,255,.18)'; circ(x, 29, -18, 23); x.fill();
+      x.strokeStyle = 'rgba(255,255,255,.9)'; x.lineWidth = 2.4; circ(x, 29, -18, 23); x.stroke();
+      x.fillStyle = '#A9C6FF'; rr(x, 10, -2, 36, 8, 4); x.fill();
+      x.fillStyle = '#E9F6FF'; rr(x, 14, 0, 28, 4, 2); x.fill();
+      x.strokeStyle = 'rgba(255,255,255,.5)'; x.lineWidth = 1.6; x.beginPath(); x.arc(22, -24, 10, Math.PI * 1.1, Math.PI * 1.7); x.stroke(); break;
+    case 'planet':
+      x.fillStyle = '#9C7BFF'; ell(x, 28, -38, 11, 8); x.fill();
+      x.strokeStyle = '#E6D8FF'; x.lineWidth = 2; x.beginPath(); x.ellipse(28, -38, 18, 5, -.15, 0, Math.PI * 2); x.stroke();
+      x.fillStyle = '#CBB7FF'; circ(x, 24, -41, 2.3); x.fill(); circ(x, 31, -35, 1.8); x.fill(); break;
+    case 'rocket':
+      x.fillStyle = '#E7EDF8'; x.beginPath(); x.moveTo(27, -52); x.quadraticCurveTo(37, -43, 34, -27); x.lineTo(20, -27); x.quadraticCurveTo(17, -43, 27, -52); x.closePath(); x.fill();
+      x.fillStyle = '#FF5C6C'; tri(x, 20, -30, 14, -20, 20, -18); x.fill(); tri(x, 34, -30, 40, -20, 34, -18); x.fill();
+      x.fillStyle = '#4DA3FF'; circ(x, 27, -38, 4.2); x.fill();
+      x.fillStyle = '#FFC93C'; tri(x, 23, -18, 31, -18, 27, -8); x.fill(); break;
   }
 }
 
@@ -661,6 +684,7 @@ function drawGusts(t) {
 }
 const LEAVES = Array.from({ length: 22 }, () => ({ x: rand(0, W), y: rand(0, WATER), sp: rand(.8, 1.6), ph: rand(0, 6), fall: rand(28, 50), col: pick(['#E8603C', '#F2A23A', '#C9432B', '#FFD166']) }));
 const SNOW = Array.from({ length: 80 }, () => ({ x: rand(0, W), y: rand(0, H), r: rand(1.2, 3.4), sp: rand(.6, 1.4), ph: rand(0, 6), fall: rand(22, 55) }));
+const COMETS = Array.from({ length: 3 }, (_, i) => ({ y: 120 + i * 92, sp: 34 + i * 11, off: i * 160, len: 34 + i * 8, ph: rand(0, 6) }));
 const TREES = [[62, 1], [118, .8], [300, .9], [352, 1.15], [430, .85]];
 function drawTrees(th, t) {
   for (const [tx, sc] of TREES) {
@@ -707,6 +731,15 @@ function drawAmbient(th, t) {
     const y = (f.y + t * f.fall) % (H + 10) - 5, x = (f.x + Math.sin(t * f.sp + f.ph) * 14 + W) % W;
     c.globalAlpha = .55 + f.r / 8; circ(c, x, y, f.r); c.fill();
   } c.globalAlpha = 1; }
+  if (th.space) {
+    for (const cm of COMETS) {
+      const x = (cm.off + t * cm.sp) % (W + 150) - 75, y = cm.y + Math.sin(t * 1.4 + cm.ph) * 14;
+      c.strokeStyle = 'rgba(180,230,255,.6)'; c.lineWidth = 2.2; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(x - cm.len, y - cm.len * .32); c.lineTo(x, y); c.stroke();
+      c.fillStyle = '#FFFFFF'; circ(c, x, y, 3.8); c.fill();
+      c.fillStyle = '#8FD8FF'; circ(c, x - 6, y - 2, 2.1); c.fill();
+    }
+  }
 }
 
 function hill(col, base, amp, freq, ph) {
@@ -718,6 +751,23 @@ function drawBG(th, t) {
   const g = c.createLinearGradient(0, 0, 0, WATER); g.addColorStop(0, th.sky[0]); g.addColorStop(1, th.sky[1]);
   c.fillStyle = g; c.fillRect(-20, -20, W + 40, WATER + 40);
   if (th.stars) { c.fillStyle = '#FFF7C2'; for (const s of STARS) { c.globalAlpha = .35 + .65 * Math.abs(Math.sin(t * s.sp + s.ph)); circ(c, s.x, 60 + s.fy * (WATER - 200), s.r); c.fill(); } c.globalAlpha = 1; }
+  if (th.space) {
+    c.fillStyle = 'rgba(64,255,240,.08)'; circ(c, 120, 116, 54); c.fill();
+    c.fillStyle = '#53D8E8'; circ(c, 120, 116, 29); c.fill();
+    c.fillStyle = '#A1F4FF'; circ(c, 110, 108, 8); c.fill();
+    c.fillStyle = '#B58CFF'; circ(c, 388, 150, 38); c.fill();
+    c.strokeStyle = 'rgba(244,230,255,.85)'; c.lineWidth = 6; c.beginPath(); c.ellipse(388, 150, 58, 14, -.18, 0, Math.PI * 2); c.stroke();
+    c.fillStyle = '#E7D9FF'; circ(c, 402, 138, 6); c.fill();
+    c.fillStyle = 'rgba(255,255,255,.12)'; circ(c, 378, 140, 11); c.fill();
+    c.save();
+    const rx = 266 + Math.sin(t * .55) * 18, ry = 96 + Math.cos(t * .7) * 10;
+    c.translate(rx, ry); c.rotate(.2 + Math.sin(t * .9) * .08);
+    c.fillStyle = '#DCE6F7'; c.beginPath(); c.moveTo(-5, 12); c.lineTo(6, 12); c.lineTo(0, 30); c.closePath(); c.fill();
+    c.fillStyle = '#FF6B6B'; c.beginPath(); c.moveTo(0, -22); c.quadraticCurveTo(16, -5, 13, 13); c.lineTo(-13, 13); c.quadraticCurveTo(-16, -5, 0, -22); c.closePath(); c.fill();
+    c.fillStyle = '#AEEBFF'; circ(c, 0, -2, 6); c.fill();
+    c.fillStyle = '#FFC93C'; tri(c, -6, 13, 0, 25, 6, 13); c.fill();
+    c.restore();
+  }
   const s = th.sun;
   if (th.wind) drawWind(t);
   if (s) {
@@ -754,6 +804,7 @@ function drawWaterFront(th, t) {
   c.lineTo(W + 20, H + 20); c.closePath(); c.fill(); c.globalAlpha = 1;
 }
 function drawClouds(th, t) {
+  if (th.space) return;
   c.fillStyle = th.shade;
   for (const p of PUFFS) { circ(c, p.x + Math.sin(t * .5 + p.x) * 4, p.y + 8, p.r); c.fill(); }
   c.fillStyle = th.cloud;
@@ -1097,7 +1148,7 @@ function goLevels() {
     const lab = document.createElement('div'); lab.className = 'world'; lab.textContent = th.name; wrap.append(lab);
     const row = document.createElement('div'); row.className = 'tiles';
     for (let k = 0; k < 3; k++) {
-      const n = w * 3 + k + 1, locked = n > g.unlocked, st = g.stars[n] || 0;
+      const n = w * 3 + k + 1, testOpen = k === 0, locked = n > g.unlocked && !testOpen, st = g.stars[n] || 0;
       const b = document.createElement('button'); b.className = 'tile' + (locked ? ' locked' : '') + (n === nxt ? ' next' : '');
       b.style.background = th.tile;
       b.setAttribute('aria-label', locked ? `Level ${n}, locked` : `Level ${n}, ${st} stars`);
