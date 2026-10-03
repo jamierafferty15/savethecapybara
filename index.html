@@ -4,8 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Catch the capybaras on your lily pad and bring them home! A free, colourful game for kids with 15 levels and Easy, Medium and Hard modes.">
+<link rel="canonical" href="https://savethecapybara.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Save the Capybara">
 <meta property="og:title" content="Save the Capybara!">
-<meta property="og:description" content="Catch the capybaras on your lily pad and bring them home! A free, colourful game for kids.">
+<meta property="og:description" content="A storm blew the capybaras into the clouds! Catch them on your lily pad and bring them home. A free, colourful game for kids.">
+<meta property="og:url" content="https://savethecapybara.com/">
+<meta property="og:image" content="https://savethecapybara.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Save the Capybara! Capybaras floating down on leaf parachutes towards a lily pad.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Save the Capybara!">
+<meta name="twitter:description" content="Catch the capybaras on your lily pad and bring them home. A free, colourful game for kids.">
+<meta name="twitter:image" content="https://savethecapybara.com/og-image.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#24164A">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>Save the Capybara</title>
@@ -79,6 +92,8 @@ body{margin:0;background:radial-gradient(circle at 50% 0%,var(--page2),var(--pag
 #musicBtn{top:calc(var(--u)*10);right:calc(var(--u)*66);z-index:5}
 #soundTitle{bottom:calc(var(--u)*14);right:calc(var(--u)*14)}
 #musicTitle{bottom:calc(var(--u)*14);right:calc(var(--u)*68)}
+#shareTitle{bottom:calc(var(--u)*14);right:calc(var(--u)*122)}
+.toast{position:absolute;left:50%;bottom:calc(var(--u)*72);transform:translateX(-50%);background:var(--ink);color:#fff;font-weight:900;font-size:calc(var(--u)*15);padding:calc(var(--u)*9) calc(var(--u)*16);border-radius:999px;white-space:nowrap;box-shadow:0 calc(var(--u)*4) 0 rgba(0,0,0,.25);z-index:6;user-select:text;-webkit-user-select:text}
 
 .panel{background:var(--panel);border-radius:calc(var(--u)*26);padding:calc(var(--u)*18);box-shadow:0 calc(var(--u)*8) 0 rgba(20,10,45,.45);width:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:calc(var(--u)*10);align-items:center;text-align:center;border:calc(var(--u)*4) solid var(--ink)}
 .panel h2{font-family:var(--display);font-weight:400;font-size:calc(var(--u)*36);margin:0;line-height:1;text-wrap:balance}
@@ -166,9 +181,11 @@ body{margin:0;background:radial-gradient(circle at 50% 0%,var(--page2),var(--pag
         <div class="chip"><canvas data-ico="conker"></canvas>Dodge spiky conkers</div>
         <div class="chip"><canvas data-ico="orange"></canvas>Oranges give a heart</div>
       </div>
+      <button class="icon-btn" id="shareTitle" aria-label="Share the game"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3.5M7.5 8L12 3.5 16.5 8"/><path d="M8 11H6.5A1.5 1.5 0 0 0 5 12.5v7A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5v-7a1.5 1.5 0 0 0-1.5-1.5H16"/></svg></button>
       <button class="icon-btn" id="musicTitle" aria-label="Music on"></button>
       <button class="icon-btn" id="soundTitle" aria-label="Sound on"></button>
       <button class="about-btn" id="aboutBtn">About</button>
+      <div class="toast" id="toast" role="status" hidden></div>
     </section>
 
     <section class="screen dim" id="scr-levels" hidden>
@@ -1161,6 +1178,21 @@ $('#playBtn').onclick = () => { SFX.click(); audio(); startLevel(nextLevel() || 
 document.querySelectorAll('.diff button').forEach(b => b.onclick = () => { audio(); SFX.click(); P.diff = b.dataset.diff; saveP(); syncDiff(); });
 $('#levelsBtn').onclick = () => { audio(); SFX.click(); goLevels(); };
 $('#clubBtn').onclick = () => { audio(); SFX.click(); goClub(); };
+/* ---------- sharing ---------- */
+const SHARE_URL = 'https://savethecapybara.com';
+let toastTimer = null;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 3000); }
+function copyLink() {
+  const done = () => toast('Link copied! Paste it to share.');
+  const fail = () => toast(SHARE_URL.replace('https://', ''));
+  try { navigator.clipboard.writeText(SHARE_URL).then(done, fail); } catch (e) { fail(); }
+}
+$('#shareTitle').onclick = () => {
+  audio(); SFX.click();
+  const data = { title: 'Save the Capybara!', text: 'Can you save all the capybaras? Come and play!', url: SHARE_URL };
+  if (navigator.share) navigator.share(data).catch(err => { if (!err || err.name !== 'AbortError') copyLink(); });
+  else copyLink();
+};
 $('#aboutBtn').onclick = () => { audio(); SFX.click(); goAbout(); };
 document.querySelectorAll('[data-back]').forEach(b => b.onclick = () => { SFX.click(); goTitle(); });
 pauseBtn.onclick = () => { SFX.click(); pauseGame(); };
